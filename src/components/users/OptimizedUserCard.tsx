@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FiClock,
@@ -6,37 +6,24 @@ import {
   FiTrash2,
   FiMail,
   FiPhone,
-  FiActivity,
-  FiAward,
-  FiUser,
   FiEye,
-  FiBriefcase,
   FiHash,
   FiCalendar,
   FiCamera,
   FiKey,
   FiTruck,
   FiLock,
-  FiMoreVertical,
-  FiEdit,
 } from "react-icons/fi";
 import { User } from "../../types";
-import { UserStatus, type UserRoleLevel } from "../users/types";
-import { Badge, Tooltip, Button } from "../common";
+import { UserStatus } from "../users/types";
+import {  Tooltip, Button } from "../common";
 import {
   formatDate,
   formatRelativeTime,
   getUserImageUrl,
-  getUserActivityStatus,
-  getActivityStatusColor,
+
   getUserStatusColor,
 } from "./utils/formatters";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { useUserContext } from "../../context/UserContext";
-import useUserPermissions from "../../hooks/useUserPermissions";
-import useUserImage from "../../hooks/useUserImage";
-import UserAvatar from "./UserAvatar";
 
 // Extend the User type locally to add our custom properties
 interface ExtendedUser extends Omit<User, "face_id"> {
@@ -74,7 +61,7 @@ interface UserCardProps {
 interface InfoItemProps {
   label: string;
   value: React.ReactNode;
-  icon: React.ComponentType<any>;
+  icon: React.ComponentType<{ size: number }>;
   monospace?: boolean;
   className?: string;
 }
@@ -152,7 +139,6 @@ const OptimizedUserCard: React.FC<UserCardProps> = memo(
   ({
     user,
     compact = false,
-    extended = false,
     className = "",
     apiUrl,
     onClick,
@@ -187,10 +173,7 @@ const OptimizedUserCard: React.FC<UserCardProps> = memo(
       [userExtended.department]
     );
 
-    const activityStatus = useMemo(
-      () => getUserActivityStatus(asUser(userExtended)),
-      [userExtended]
-    );
+
 
     const employeeId = useMemo(
       () => userExtended.employee_id || "",
@@ -252,7 +235,7 @@ const OptimizedUserCard: React.FC<UserCardProps> = memo(
 
     // Compute card classes
     const cardClasses = useMemo(() => {
-      let classes = `bg-white rounded-xl shadow-sm hover:shadow-lg 
+      const classes = `bg-white rounded-xl shadow-sm hover:shadow-lg 
         transition-all duration-300 border ${
           selected ? "border-blue-400 ring-2 ring-blue-200" : "border-gray-100"
         }
